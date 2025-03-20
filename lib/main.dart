@@ -159,6 +159,7 @@ class _LEDBannerScreenState extends State<LEDBannerScreen> {
   bool _isBlinking = true;
   double _position = 0;
   double _speed = 2;
+  double _fontSize = 40; // Add this line
   final List<String> _fonts = ["Arial", "Courier", "Times New Roman", "Verdana", "HighSpeedFont"];
   String _selectedFont = "Arial";
 
@@ -214,6 +215,7 @@ class _LEDBannerScreenState extends State<LEDBannerScreen> {
             const SizedBox(height: 10),
             _buildSpeedSlider(),
             const SizedBox(height: 10),
+            _buildFontSizeSlider(), // Add this line
             const Text("Your Display Text:",
                 style: TextStyle(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
@@ -295,6 +297,26 @@ class _LEDBannerScreenState extends State<LEDBannerScreen> {
     );
   }
 
+  Widget _buildFontSizeSlider() { // Add this method
+    return Column(
+      children: [
+        const Text("Adjust Font Size", style: TextStyle(color: Colors.white70)),
+        Slider(
+          value: _fontSize,
+          min: 20,
+          max: 100,
+          divisions: 8,
+          label: _fontSize.toStringAsFixed(1),
+          onChanged: (value) {
+            setState(() {
+              _fontSize = value;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
   Widget _buildLEDText() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -304,14 +326,14 @@ class _LEDBannerScreenState extends State<LEDBannerScreen> {
         child: Text(
           _textController.text,
           style: TextStyle(
-            fontSize: 40,
+            fontSize: _fontSize, // Update this line
             fontWeight: FontWeight.bold,
             color: _selectedColor,
             fontFamily: _selectedFont,
             shadows: [
               Shadow(
                 blurRadius: 15,
-                color: _selectedColor.withOpacity(0.8), // Use withOpacity from Color class
+                color: _selectedColor.withOpacity(0.8),
                 offset: const Offset(3, 3),
               ),
             ],
