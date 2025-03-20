@@ -470,7 +470,7 @@ class _DisplayScreenState extends State<DisplayScreen> with SingleTickerProvider
             duration: const Duration(milliseconds: 500),
             opacity: _isBlinking ? 1.0 : 0.2,
             child: Text(
-              widget.text.isEmpty ? "Welcome!" : widget.text,
+              widget.text.isEmpty ? "Welcome!!" : widget.text,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 60,
