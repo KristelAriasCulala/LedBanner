@@ -373,6 +373,7 @@ class _LEDBannerScreenState extends State<LEDBannerScreen> {
               color: _selectedColor,
               font: _selectedFont,
               speed: _speed,
+              fontSize: _fontSize, // Pass the fontSize here
             ),
           ),
         );
@@ -402,6 +403,7 @@ class DisplayScreen extends StatefulWidget {
   final Color color;
   final String font;
   final double speed;
+  final double fontSize; // Add this line
 
   const DisplayScreen({
     super.key,
@@ -409,6 +411,7 @@ class DisplayScreen extends StatefulWidget {
     required this.color,
     required this.font,
     required this.speed,
+    required this.fontSize, // Add this line
   });
 
   @override
@@ -473,7 +476,7 @@ class _DisplayScreenState extends State<DisplayScreen> with SingleTickerProvider
               widget.text.isEmpty ? "Welcome!!" : widget.text,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 60,
+                fontSize: widget.fontSize, // Use the fontSize here
                 fontWeight: FontWeight.bold,
                 color: widget.color,
                 fontFamily: widget.font,
