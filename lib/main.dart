@@ -18,11 +18,82 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.black,
         textTheme: const TextTheme(bodyMedium: TextStyle(color: Colors.white)),
       ),
-      home: const HomeScreen(),
+      home: const SplashScreen(), // Start with the splash screen
     );
   }
 }
 
+/// Splash Screen with Fade-in Animation
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Animation controller for fade-in effect
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5),
+    );
+
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
+    _controller.forward();
+
+    // Navigate to HomeScreen after 3 seconds
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Center(
+        child: FadeTransition(
+          opacity: _animation,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.lightbulb, size: 80, color: Colors.red), // App icon
+              const SizedBox(height: 10),
+              const Text(
+                'LED Banner Creator',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Home Screen
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -74,6 +145,7 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+/// LED Banner Screen
 class LEDBannerScreen extends StatefulWidget {
   const LEDBannerScreen({super.key});
 
@@ -239,7 +311,7 @@ class _LEDBannerScreenState extends State<LEDBannerScreen> {
             shadows: [
               Shadow(
                 blurRadius: 15,
-                color: _selectedColor.withOpacity(0.8),
+                color: _selectedColor.withOpacity(0.8), // Use withOpacity from Color class
                 offset: const Offset(3, 3),
               ),
             ],
@@ -324,6 +396,8 @@ class DisplayScreen extends StatefulWidget {
 class _DisplayScreenState extends State<DisplayScreen> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<Offset> _animation;
+  late Timer _blinkTimer;
+  bool _isBlinking = true;
 
   @override
   void initState() {
@@ -334,9 +408,17 @@ class _DisplayScreenState extends State<DisplayScreen> with SingleTickerProvider
     )..repeat(reverse: false);
 
     _animation = Tween<Offset>(
-      begin: Offset(1, 0),
-      end: Offset(-1, 0),
+      begin: const Offset(1, 0),
+      end: const Offset(-1, 0),
     ).animate(_animationController);
+
+    _blinkTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      if (mounted) {
+        setState(() {
+          _isBlinking = !_isBlinking;
+        });
+      }
+    });
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
@@ -347,6 +429,7 @@ class _DisplayScreenState extends State<DisplayScreen> with SingleTickerProvider
   @override
   void dispose() {
     _animationController.dispose();
+    _blinkTimer.cancel();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -361,14 +444,18 @@ class _DisplayScreenState extends State<DisplayScreen> with SingleTickerProvider
       body: Center(
         child: SlideTransition(
           position: _animation,
-          child: Text(
-            widget.text.isEmpty ? "Welcome!" : widget.text,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 60,
-              fontWeight: FontWeight.bold,
-              color: widget.color,
-              fontFamily: widget.font,
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 500),
+            opacity: _isBlinking ? 1.0 : 0.2,
+            child: Text(
+              widget.text.isEmpty ? "Welcome!" : widget.text,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 60,
+                fontWeight: FontWeight.bold,
+                color: widget.color,
+                fontFamily: widget.font,
+              ),
             ),
           ),
         ),
