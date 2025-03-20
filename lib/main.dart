@@ -78,10 +78,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               const Icon(Icons.lightbulb, size: 80, color: Colors.red), // App icon
               const SizedBox(height: 10),
               const Text(
-                'LED Banner Creator',
+                'Neonora',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 26,
+                  fontSize: 60,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -105,13 +105,34 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'LED Banner Creator',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
+            AnimatedOpacity(
+              duration: const Duration(milliseconds: 500),
+              opacity: 1.0,
+              child: Text(
+                'Neonora',
+                style: TextStyle(
+                  fontSize: 50,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                  fontFamily: 'HighSpeedFont',
+                  shadows: [
+                    Shadow(
+                      blurRadius: 15,
+                      color: Colors.lightBlueAccent.withOpacity(0.8),
+                      offset: const Offset(3, 3),
+                    ),
+                  ],
+                ),
               ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              '🎇 Turn your phone into a vibrant LED banner with Neonora! 🌈',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.white70,
+              ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
             ElevatedButton(
