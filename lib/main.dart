@@ -159,15 +159,16 @@ class _LEDBannerScreenState extends State<LEDBannerScreen> {
   bool _isBlinking = true;
   double _position = 0;
   double _speed = 2;
-  double _fontSize = 40; // Add this line
+  double _fontSize = 40;
   final List<String> _fonts = ["Arial", "Courier", "Times New Roman", "Verdana", "HighSpeedFont"];
   String _selectedFont = "Arial";
+  final List<String> _directions = ["Left", "Right", "Up", "Down"];
+  String _selectedDirection = "Left"; // Default direction
 
   @override
   void initState() {
     super.initState();
     _startBlinking();
-    _startScrolling();
   }
 
   void _startBlinking() {
@@ -175,19 +176,6 @@ class _LEDBannerScreenState extends State<LEDBannerScreen> {
       if (mounted) {
         setState(() {
           _isBlinking = !_isBlinking;
-        });
-      }
-    });
-  }
-
-  void _startScrolling() {
-    Timer.periodic(const Duration(milliseconds: 30), (timer) {
-      if (mounted) {
-        setState(() {
-          _position -= _speed;
-          if (_position < -300) {
-            _position = MediaQuery.of(context).size.width;
-          }
         });
       }
     });
@@ -215,7 +203,9 @@ class _LEDBannerScreenState extends State<LEDBannerScreen> {
             const SizedBox(height: 10),
             _buildSpeedSlider(),
             const SizedBox(height: 10),
-            _buildFontSizeSlider(), // Add this line
+            _buildFontSizeSlider(),
+            const SizedBox(height: 10),
+            _buildDirectionDropdown(), // Add direction dropdown
             const Text("Your Display Text:",
                 style: TextStyle(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
@@ -264,6 +254,43 @@ class _LEDBannerScreenState extends State<LEDBannerScreen> {
     );
   }
 
+  Widget _buildDirectionDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Select Direction", // Text label for the direction dropdown
+          style: TextStyle(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8), // Add some spacing
+        DropdownButton<String>(
+          dropdownColor: Colors.black,
+          value: _selectedDirection,
+          isExpanded: true, // Ensures the dropdown takes full width
+          items: _directions.map((direction) {
+            return DropdownMenuItem(
+              value: direction,
+              child: Container(
+                alignment: Alignment.center, // Centers the text
+                child: Text(
+                  direction,
+                  style: const TextStyle(color: Colors.white),
+                  textAlign: TextAlign.center, // Ensures text is centered
+                ),
+              ),
+            );
+          }).toList(),
+          onChanged: (value) {
+            setState(() {
+              _selectedDirection = value!;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+
   Widget _buildColorSelection() {
     return Wrap(
       spacing: 10,
@@ -297,7 +324,7 @@ class _LEDBannerScreenState extends State<LEDBannerScreen> {
     );
   }
 
-  Widget _buildFontSizeSlider() { // Add this method
+  Widget _buildFontSizeSlider() {
     return Column(
       children: [
         const Text("Adjust Font Size", style: TextStyle(color: Colors.white70)),
@@ -326,7 +353,7 @@ class _LEDBannerScreenState extends State<LEDBannerScreen> {
         child: Text(
           _textController.text,
           style: TextStyle(
-            fontSize: _fontSize, // Update this line
+            fontSize: _fontSize,
             fontWeight: FontWeight.bold,
             color: _selectedColor,
             fontFamily: _selectedFont,
@@ -373,7 +400,8 @@ class _LEDBannerScreenState extends State<LEDBannerScreen> {
               color: _selectedColor,
               font: _selectedFont,
               speed: _speed,
-              fontSize: _fontSize, // Pass the fontSize here
+              fontSize: _fontSize,
+              direction: _selectedDirection, // Pass the direction here
             ),
           ),
         );
@@ -403,7 +431,8 @@ class DisplayScreen extends StatefulWidget {
   final Color color;
   final String font;
   final double speed;
-  final double fontSize; // Add this line
+  final double fontSize;
+  final String direction; // Add direction parameter
 
   const DisplayScreen({
     super.key,
@@ -411,7 +440,8 @@ class DisplayScreen extends StatefulWidget {
     required this.color,
     required this.font,
     required this.speed,
-    required this.fontSize, // Add this line
+    required this.fontSize,
+    required this.direction, // Add direction parameter
   });
 
   @override
@@ -432,10 +462,28 @@ class _DisplayScreenState extends State<DisplayScreen> with SingleTickerProvider
       duration: Duration(seconds: (20 / widget.speed).round()),
     )..repeat(reverse: false);
 
-    _animation = Tween<Offset>(
-      begin: const Offset(1, 0),
-      end: const Offset(-1, 0),
-    ).animate(_animationController);
+    // Set animation direction based on the selected direction
+    switch (widget.direction) {
+      case "Left":
+        _animation = Tween<Offset>(
+            begin: const Offset(1, 0), end: const Offset(-1, 0)).animate(_animationController);
+        break;
+      case "Right":
+        _animation = Tween<Offset>(
+            begin: const Offset(-1, 0), end: const Offset(1, 0)).animate(_animationController);
+        break;
+      case "Up":
+        _animation = Tween<Offset>(
+            begin: const Offset(0, 1), end: const Offset(0, -1)).animate(_animationController);
+        break;
+      case "Down":
+        _animation = Tween<Offset>(
+            begin: const Offset(0, -1), end: const Offset(0, 1)).animate(_animationController);
+        break;
+      default:
+        _animation = Tween<Offset>(
+            begin: const Offset(1, 0), end: const Offset(-1, 0)).animate(_animationController);
+    }
 
     _blinkTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
       if (mounted) {
@@ -476,7 +524,7 @@ class _DisplayScreenState extends State<DisplayScreen> with SingleTickerProvider
               widget.text.isEmpty ? "Welcome!!" : widget.text,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: widget.fontSize, // Use the fontSize here
+                fontSize: widget.fontSize,
                 fontWeight: FontWeight.bold,
                 color: widget.color,
                 fontFamily: widget.font,
