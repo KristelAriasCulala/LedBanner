@@ -159,7 +159,7 @@ class _LEDBannerScreenState extends State<LEDBannerScreen> {
   bool _isBlinking = true;
   double _position = 0;
   double _speed = 2;
-  final List<String> _fonts = ["Arial", "Courier", "Times New Roman", "Verdana"];
+  final List<String> _fonts = ["Arial", "Courier", "Times New Roman", "Verdana", "HighSpeedFont"];
   String _selectedFont = "Arial";
 
   @override
