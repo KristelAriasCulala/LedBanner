@@ -18,12 +18,56 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.black,
         textTheme: const TextTheme(bodyMedium: TextStyle(color: Colors.white)),
       ),
-      home: const SplashScreen(), // Start with the splash screen
+      builder: (context, child) {
+        return Scaffold(
+          body: Stack(
+            children: [
+              child!,
+              Positioned(
+                top: 40,
+                right: 10,
+                child: IconButton(
+                  icon: const Icon(Icons.info_outline),
+                  onPressed: () => _showTeamInfoDialog(context),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+      home: const SplashScreen(),
+    );
+  }
+
+  void _showTeamInfoDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('DevOps Team'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text('Luis Gabrielle Estacio'),
+              Text('Kirstel Culala'),
+              Text('Adrian Mhaki Macabali'),
+              Text('Megan Esguerra'),
+              Text('John ivan Baligod'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
 
-/// Splash Screen with Fade-in Animation
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -39,7 +83,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   void initState() {
     super.initState();
 
-    // Animation controller for fade-in effect
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 5),
@@ -48,7 +91,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _controller.forward();
 
-    // Navigate to HomeScreen after 3 seconds
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
         Navigator.pushReplacement(
@@ -75,7 +117,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.lightbulb, size: 80, color: Colors.red), // App icon
+              const Icon(Icons.lightbulb, size: 80, color: Colors.red),
               const SizedBox(height: 10),
               const Text(
                 'Neonora',
@@ -93,7 +135,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   }
 }
 
-/// Home Screen
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -166,7 +207,6 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-/// LED Banner Screen
 class LEDBannerScreen extends StatefulWidget {
   const LEDBannerScreen({super.key});
 
@@ -175,7 +215,7 @@ class LEDBannerScreen extends StatefulWidget {
 }
 
 class _LEDBannerScreenState extends State<LEDBannerScreen> {
-  final TextEditingController _textController = TextEditingController(text: "Welcome!");
+  final TextEditingController _textController = TextEditingController(text: "Welcome!!!");
   Color _selectedColor = Colors.red;
   bool _isBlinking = true;
   double _position = 0;
@@ -184,7 +224,7 @@ class _LEDBannerScreenState extends State<LEDBannerScreen> {
   final List<String> _fonts = ["Arial", "Courier", "Times New Roman", "Verdana", "HighSpeedFont"];
   String _selectedFont = "Arial";
   final List<String> _directions = ["Left", "Right", "Up", "Down"];
-  String _selectedDirection = "Left"; // Default direction
+  String _selectedDirection = "Left";
 
   @override
   void initState() {
@@ -226,7 +266,7 @@ class _LEDBannerScreenState extends State<LEDBannerScreen> {
             const SizedBox(height: 10),
             _buildFontSizeSlider(),
             const SizedBox(height: 10),
-            _buildDirectionDropdown(), // Add direction dropdown
+            _buildDirectionDropdown(),
             const Text("Your Display Text:",
                 style: TextStyle(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
@@ -280,23 +320,23 @@ class _LEDBannerScreenState extends State<LEDBannerScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Select Direction", // Text label for the direction dropdown
+          "Select Direction",
           style: TextStyle(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 8), // Add some spacing
+        const SizedBox(height: 8),
         DropdownButton<String>(
           dropdownColor: Colors.black,
           value: _selectedDirection,
-          isExpanded: true, // Ensures the dropdown takes full width
+          isExpanded: true,
           items: _directions.map((direction) {
             return DropdownMenuItem(
               value: direction,
               child: Container(
-                alignment: Alignment.center, // Centers the text
+                alignment: Alignment.center,
                 child: Text(
                   direction,
                   style: const TextStyle(color: Colors.white),
-                  textAlign: TextAlign.center, // Ensures text is centered
+                  textAlign: TextAlign.center,
                 ),
               ),
             );
@@ -310,7 +350,6 @@ class _LEDBannerScreenState extends State<LEDBannerScreen> {
       ],
     );
   }
-
 
   Widget _buildColorSelection() {
     return Wrap(
@@ -422,7 +461,7 @@ class _LEDBannerScreenState extends State<LEDBannerScreen> {
               font: _selectedFont,
               speed: _speed,
               fontSize: _fontSize,
-              direction: _selectedDirection, // Pass the direction here
+              direction: _selectedDirection,
             ),
           ),
         );
@@ -453,7 +492,7 @@ class DisplayScreen extends StatefulWidget {
   final String font;
   final double speed;
   final double fontSize;
-  final String direction; // Add direction parameter
+  final String direction;
 
   const DisplayScreen({
     super.key,
@@ -462,7 +501,7 @@ class DisplayScreen extends StatefulWidget {
     required this.font,
     required this.speed,
     required this.fontSize,
-    required this.direction, // Add direction parameter
+    required this.direction,
   });
 
   @override
@@ -483,7 +522,6 @@ class _DisplayScreenState extends State<DisplayScreen> with SingleTickerProvider
       duration: Duration(seconds: (20 / widget.speed).round()),
     )..repeat(reverse: false);
 
-    // Set animation direction based on the selected direction
     switch (widget.direction) {
       case "Left":
         _animation = Tween<Offset>(
