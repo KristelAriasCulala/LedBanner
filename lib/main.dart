@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
-
+import 'package:flutter/cupertino.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -9,6 +9,7 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  @override
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -18,11 +19,13 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.black,
         textTheme: const TextTheme(bodyMedium: TextStyle(color: Colors.white)),
       ),
-      builder: (context, child) {
-        return Scaffold(
-          body: Stack(
+      home: Builder(
+        builder: (BuildContext context) {
+          return Stack(
             children: [
-              child!,
+              const Scaffold(
+                body: HomeScreen(),
+              ),
               Positioned(
                 top: 40,
                 right: 10,
@@ -32,32 +35,30 @@ class MyApp extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-        );
-      },
-      home: const SplashScreen(),
+          );
+        },
+      ),
     );
   }
 
   void _showTeamInfoDialog(BuildContext context) {
-    showDialog(
+    showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('DevOps Team'),
+        return CupertinoAlertDialog(
+          title: const Text('DevOps Team', style: TextStyle(fontWeight: FontWeight.bold)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: const [
-              Text('Luis Gabrielle Estacio'),
-              Text('Kirstel Culala'),
-              Text('Adrian Mhaki Macabali'),
-              Text('Megan Esguerra'),
-              Text('John ivan Baligod'),
+              Text('Luis Gabrielle Estacio', textAlign: TextAlign.center),
+              Text('Kirstel Culala', textAlign: TextAlign.center),
+              Text('Adrian Mhaki Macabali', textAlign: TextAlign.center),
+              Text('Megan Esguerra', textAlign: TextAlign.center),
+              Text('John Ivan Baligod', textAlign: TextAlign.center),
             ],
           ),
           actions: [
-            TextButton(
+            CupertinoDialogAction(
               onPressed: () => Navigator.of(context).pop(),
               child: const Text('Close'),
             ),
@@ -66,6 +67,7 @@ class MyApp extends StatelessWidget {
       },
     );
   }
+
 }
 
 class SplashScreen extends StatefulWidget {
